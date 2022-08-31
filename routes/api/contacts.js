@@ -2,7 +2,11 @@ const express = require("express");
 
 const router = express.Router();
 
-const { validationBody, isValidContactId } = require("../../middlewares");
+const {
+  authenticate,
+  validationBody,
+  isValidContactId,
+} = require("../../middlewares");
 
 const { schemas } = require("../../models/contact");
 
@@ -12,12 +16,22 @@ const { ctrlWrapper } = require("../../helpers");
 
 // Routes
 
+/// СДЕЛАТЬ ПЛАГИНАЦИЮ https://www.youtube.com/watch?v=ZX3qt0UWifc
+// https://softwareontheroad.com/pagination-in-nodejs-mongo/
+// router.get(":?", async (req, res) => {
+//   console.log(req.query);
+//   res.json({
+//     result: req.query,
+//   });
+// });
+
 router.get("/", ctrlWrapper(ctrls.listContacts));
 
 router.get("/:contactId", isValidContactId, ctrlWrapper(ctrls.getContactById));
 
 router.post(
   "/",
+  authenticate,
   validationBody(schemas.contactAddSchema),
   ctrlWrapper(ctrls.addContact)
 );
