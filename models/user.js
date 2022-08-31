@@ -4,6 +4,7 @@ const { handleSchemaValidationErrors } = require("../helpers");
 // const bcrypt = require("bcryptjs");
 
 const emailRegexp = /^[\w.]+@[\w]+.[\w]+$/;
+const subscriptionList = ["starter", "pro", "business"];
 
 const userSchema = new Schema(
   {
@@ -18,7 +19,7 @@ const userSchema = new Schema(
     },
     subscription: {
       type: String,
-      enum: ["starter", "pro", "business"],
+      enum: subscriptionList,
       default: "starter",
     },
     token: {
@@ -30,28 +31,37 @@ const userSchema = new Schema(
 );
 userSchema.post("save", handleSchemaValidationErrors);
 
-//Other schema methods - validate password
+// Other schema methods - validate password
 
 // userSchema.methods.validatePassword = function (password) {
 //   return bcrypt.compare(password, this.password);
 // };
 
-//Register/Login Schema
+// Register/Login Schema
 const registerSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
   password: Joi.string().min(6).required(),
   repeat_password: Joi.ref("password"),
 });
+// repeat_password: Joi.string().required().valid(Joi.ref("password"))
 
 const loginSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
   password: Joi.string().min(6).required(),
 });
 
+const updateSubscriptionSchema = Joi.object({
+  subscription: Joi.string()
+    .valid(...subscriptionList)
+    .required(),
+});
+
 const schemas = {
   registerSchema,
   loginSchema,
+  updateSubscriptionSchema,
 };
+
 const User = model("user", userSchema);
 module.exports = {
   User,
