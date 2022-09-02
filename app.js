@@ -10,10 +10,6 @@ const app = express();
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
-const authenticate = require("./middlewares");
-
-const { schemas } = require("./models/contact");
-
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
