@@ -10,50 +10,47 @@ const {
 
 const { schemas } = require("../../models/contact");
 
-const ctrls = require("../../controllers/contacts");
+const { contactsControllers } = require("../../controllers");
 
 const { ctrlWrapper } = require("../../helpers");
 
 // Routes
 
-/// СДЕЛАТЬ ПЛАГИНАЦИЮ https://www.youtube.com/watch?v=ZX3qt0UWifc
-// https://softwareontheroad.com/pagination-in-nodejs-mongo/
-// router.get(":?", async (req, res) => {
-//   console.log(req.query);
-//   res.json({
-//     result: req.query,
-//   });
-// });
+router.get("/", authenticate, ctrlWrapper(contactsControllers.listContacts));
 
-router.get("/", ctrlWrapper(ctrls.listContacts));
-
-router.get("/:contactId", isValidContactId, ctrlWrapper(ctrls.getContactById));
+router.get(
+  "/:contactId",
+  isValidContactId,
+  ctrlWrapper(contactsControllers.getContactById)
+);
 
 router.post(
   "/",
   authenticate,
   validationBody(schemas.contactAddSchema),
-  ctrlWrapper(ctrls.addContact)
+  ctrlWrapper(contactsControllers.addContact)
 );
 
 router.put(
   "/:contactId",
   isValidContactId,
   validationBody(schemas.contactAddSchema),
-  ctrlWrapper(ctrls.updateContact)
+  ctrlWrapper(contactsControllers.updateContact)
 );
 
 router.patch(
   "/:contactId/favorite",
+  authenticate,
   isValidContactId,
   validationBody(schemas.updateFavoriteSchema),
-  ctrlWrapper(ctrls.updateStatusContact)
+  ctrlWrapper(contactsControllers.updateStatusContact)
 );
 
 router.delete(
   "/:contactId",
+  authenticate,
   isValidContactId,
-  ctrlWrapper(ctrls.removeContact)
+  ctrlWrapper(contactsControllers.removeContact)
 );
 
 module.exports = router;
