@@ -16,7 +16,16 @@ router.post(
   validationBody(schemas.registerSchema),
   ctrlWrapper(authControllers.register)
 );
-
+// verifyMail
+router.get(
+  "/verify/:verificationToken",
+  ctrlWrapper(authControllers.verifyEmail)
+);
+router.post(
+  "/verify",
+  validationBody(schemas.verifyEmailSchema),
+  ctrlWrapper(authControllers.resendVerifyEmail)
+);
 // singin
 router.post(
   "/login",
@@ -32,7 +41,6 @@ router.patch(
   validationBody(schemas.updateSubscriptionSchema),
   ctrlWrapper(authControllers.updateSubscriptionUser)
 );
-module.exports = router;
 
 // patch avatar
 router.patch(
@@ -41,3 +49,5 @@ router.patch(
   upload.single("avatar"),
   ctrlWrapper(authControllers.updateAvatarUser)
 );
+
+module.exports = router;
